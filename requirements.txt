@@ -1,0 +1,17 @@
+sysinfo
+py-cpuinfo
+GPUtil
+mpmath
+ping3
+scapy
+netifaces
+uuid
+speedtest-cli
+markdown
+pythonping
+colorama
+psutil
+pyusb
+speedtest-cli
+psutil
+ping3
