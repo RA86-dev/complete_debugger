@@ -813,7 +813,7 @@ def get_all_logs():
         ])
     else:
         print("Unsupported operating system")
-        return ""
+        return "Unsupported Operating System"
 
     all_log_data = ""
     for log_path in logs:
@@ -953,7 +953,21 @@ def argument(ar2g):
                 continue
     else:
         print("No arguments provided.")
+print(
+    'REQUIRES TO BE RAN WITH SUDO.'
+)
+python_version = platform.python_version()
+if psutil.MACOS:
+    print(f'You are Running MacOS on version (Python): {python_version}')
+elif psutil.WINDOWS:
+    print(f'You are running Windows on version (Python): {python_version}')
+elif psutil.LINUX:
+    print(f'You are Running Linux on version (Python): {python_version}')
+else:
+    print('Unkown Software.')
+print('=' * 50)
 print('Device debugger:')
+
 print(f'More CPU data:')
 os.system('cpuinfo')
 print(f"Updated: {x}")
@@ -963,7 +977,9 @@ print(f"Power data: {power}")
 print(f"USB Devices: {USB_devices}")
 print(f"Logs: {get_all_logs()}")
 print(f"Swap data: {swap_memoryData}")
+print("=" * 50)
 print(f"Network Debugger")
+
 v=""
 entry_points = get_entry_points()
 interface = input('Interface:')
@@ -1006,9 +1022,7 @@ print(f"Proxy: {proxy}")
 print(f"IP: {check_public_ip()}")
 print(f"Internet Speed: {check_internet_speed()}")
 print(f"Get Interface Addresses: {get_interface_addresses(interface)}")
-
 print(f"Mac Address: {mac_address}")
-print(f"Network Connections: {network_connections}")
-print(f"User Node:{uuid.getnode()}")
 
-print(f"Firewall Status: {check_firewall_status()}")
+print(f"User Node:{uuid.getnode()}")
+print('=' * 50)
