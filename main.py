@@ -1,28 +1,35 @@
-import psutil
-import sysinfo
-import platform,cpuinfo
-import GPUtil
-import time
-import usb.core
-import usb.util
-import os
-import socket
-import ping3
-import uuid
-import re
-from scapy.all import sniff, IP
-import netifaces
-import subprocess
-import scapy.all as scapy
-import psutil
-import time
-from scapy.all import *
-import platform
-import speedtest
-import requests
-from datetime import datetime
-import pythonping
-from colorama import Fore,Back,init,Style
+
+print(f"Complete Debugger")
+print(f"Verson: 0.5")
+
+try:
+    import psutil
+    import sysinfo
+    import platform,cpuinfo
+    import GPUtil
+    import time
+    import usb.core
+    import usb.util
+    import os
+    import socket
+    import ping3
+    import uuid
+    import re
+    from scapy.all import sniff, IP
+    import netifaces
+    import subprocess
+    import scapy.all as scapy
+    import psutil
+    import time
+    from scapy.all import *
+    import platform
+    import speedtest
+    import requests
+    from datetime import datetime
+    import pythonping
+    from colorama import Fore,Back,init,Style
+except Exception as caX:
+    print(f"An error has occured. {caX}")
 init()
 print(f"{Style.BRIGHT} COMPLETE DEBUGGER {Style.RESET_ALL}")
 def get_device_name(ip_address):
@@ -545,7 +552,6 @@ def check_network_traffic_by_protocol(protocol):
 def check_network_interface_statistics():
     stats = psutil.net_io_counters(pernic=True)
     return stats
-
 def check_listening_ports():
     listening_ports = psutil.net_connections(kind="inet")
     listening_ports = [conn for conn in listening_ports if conn.status == "LISTEN"]
@@ -978,6 +984,7 @@ print(f"USB Devices: {USB_devices}")
 print(f"Logs: {get_all_logs()}")
 print(f"Swap data: {swap_memoryData}")
 print("=" * 50)
+
 print(f"Network Debugger")
 
 v=""
