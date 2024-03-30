@@ -45,8 +45,9 @@ This script provides comprehensive debugging and network analysis functionalitie
 - Swap memory usage analysis.
 
 ## Supported Commands
-
-- For a list of supported commands, refer to the script.
+The list of attributes at this moment that you can run like ```sudo python3 path/to/main.py attribute```
+- nothing; putting nothing in the slot will open CPU data and logs for debugging
+- qMT - qMT opens a benchmark.
 
 ## Examples
 
@@ -54,11 +55,10 @@ This script provides comprehensive debugging and network analysis functionalitie
 ```sudo python3 path/to/main.py```
 **NOTE**
   The new update allows you to just run the line shown above, but if you were to run
-```sudo python3 path/to/main.py qMT``` specifically qMT,you can run a Benchmark.
+```sudo python3 path/to/main.py qMT``` specifically qMT, you can run a Benchmark.
   
 
-## Latest Update!
-Hello! The newest update allows you to run a test benchmark instead of the usual Debugging Tools. In order to stress render, we made it so that it would generate images from Unsplash. Credits go to: 
+## Credits!
 **ALL TEST PHOTOS:**
 
 Photo by [Kenny Cinders](https://unsplash.com/@kennycinders?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash) on [Unsplash](https://unsplash.com/photos/brown-pathway-between-brown-trees-during-daytime-7qRM11Kmnh4?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)
