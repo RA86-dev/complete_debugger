@@ -30,22 +30,7 @@ try:
     from datetime import datetime
     import pythonping
     from colorama import init,Style
-    import time
 
-    import mpmath
-    import psutil
-    import numpy as np
-    import pyopencl as cl
-    import time
-    import os
-    import random
-    import cv2
-
-    import tensorflow as tf
-    import platform
-    import math
-
-    import requests
 except Exception as caX:
     print(f"An error has occured. {caX}")
 init()
@@ -1239,6 +1224,7 @@ def display_cpu_info():
 
 def compute_execution_time(executionTime):
     points = round(executionTime / 10)
+    return points
 
 if argument(False):
     python_version = platform.python_version()
@@ -1287,7 +1273,63 @@ if argument(False):
 
     print(f"User Node:{uuid.getnode()}")
     print('=' * 50)
-elif argument("qMT"):
+elif argument("qMT") or argument("qmt"):
     print('USING QUANTUM MARK PRO VERSION')
+    import time
+
+    import mpmath
+    import psutil
+    import numpy as np
+    import pyopencl as cl
+    import time
+    import os
+    import random
+    import cv2
+
+    import tensorflow as tf
+    import platform
+    import math
+
+    import requests
     # run Quantum Mark Pro
     modeA()
+elif argument("pc"):
+    print(f'More CPU data:')
+    os.system('cpuinfo')
+    print(f"Updated: {x}")
+    print(f"CPU Usage: {cpu_percent}")
+    print(f"RAM Usage: {ram_percent}")
+    print(f"Power data: {power}")
+    print(f"USB Devices: {USB_devices}")
+    print(f"Logs: {get_all_logs()}")
+    print(f"Swap data: {swap_memoryData}")
+    print("=" * 50)
+elif argument("network"):
+    
+    print(f"Network Debugger")
+
+    v=""
+    entry_points = get_entry_points()
+    interface = str(input('Interface (type ifconfig or ipconfig for all interfaces):'))
+    mac_address = get_mac_address(interface)
+    network_connections = print_network_connections()
+
+    if netifaces.AF_INET in entry_points:
+        for entry_point in entry_points[netifaces.AF_INET]:
+            v +=  f"Entry Point: {entry_point[1]}, Gateway: {entry_point[0]}\n"
+    print(f"Entry Points: {v}")
+    latency = check_network_latency()
+    print(f"Latency: {latency}")
+    proxy = detect_proxy()
+    print(f"Proxy: {proxy}")
+    print(f"IP: {check_public_ip()}")
+    print(f"Get Interface Addresses: {get_interface_addresses(interface)}")
+    print(f"Mac Address: {mac_address}")
+    print(f"Internet Speed: {check_internet_speed()}")
+
+    print(f"User Node:{uuid.getnode()}")
+    print('=' * 50)
+elif argument('os_system'):
+    print(f'Operating System: {platform.platform()}')
+else:
+    print('Unrecognized Attribute. Please check your attribute.')
