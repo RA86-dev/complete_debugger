@@ -3,6 +3,7 @@ print(f"Complete Debugger")
 print(f"Verson: 0.5")
 
 try:
+
     import psutil
     import sysinfo
     import platform,cpuinfo
@@ -15,10 +16,11 @@ try:
     import ping3
     import uuid
     import re
+
     from scapy.all import sniff, IP
     import netifaces
     import subprocess
-    import scapy.all as scapy
+
     import psutil
     import time
     from scapy.all import *
@@ -27,7 +29,23 @@ try:
     import requests
     from datetime import datetime
     import pythonping
-    from colorama import Fore,Back,init,Style
+    from colorama import init,Style
+    import time
+
+    import mpmath
+    import psutil
+    import numpy as np
+    import pyopencl as cl
+    import time
+    import os
+    import random
+    import cv2
+
+    import tensorflow as tf
+    import platform
+    import math
+
+    import requests
 except Exception as caX:
     print(f"An error has occured. {caX}")
 init()
@@ -667,6 +685,7 @@ def check_firewall_rules():
 def check_active_tcp_connections():
     tcp_connections = psutil.net_connections(kind='tcp')
     return tcp_connections
+
 def arp(interface=None):
     try:
         arp_cmd = ['arp', '-a']
@@ -949,87 +968,326 @@ logs = get_all_logs()
 os_st = getSystemInformation()
 import sys
 def argument(ar2g):
-    if len(sys.argv) > 1:
-        args = sys.argv[1:]  # Exclude the script name itself
-        print("Arguments detected:")
-        for arg in args:
-            if arg == ar2g:
-                return True
-            else:
-                continue
+    if ar2g:
+        if len(sys.argv) > 1:
+            args = sys.argv[1:]  # Exclude the script name itself
+            print("Arguments detected:")
+            for arg in args:
+                if arg == ar2g:
+                    return True
+                else:
+                    continue
+        else:
+            print("No arguments provided.")
     else:
-        print("No arguments provided.")
+        return False
 print(
     'REQUIRES TO BE RAN WITH SUDO.'
 )
-python_version = platform.python_version()
-if psutil.MACOS:
-    print(f'You are Running MacOS on version (Python): {python_version}')
-elif psutil.WINDOWS:
-    print(f'You are running Windows on version (Python): {python_version}')
-elif psutil.LINUX:
-    print(f'You are Running Linux on version (Python): {python_version}')
-else:
-    print('Unkown Software.')
-print('=' * 50)
-print('Device debugger:')
+def testGPUPerformance(matrix_size_width=1024,matrix_size_height=1024):
 
-print(f'More CPU data:')
-os.system('cpuinfo')
-print(f"Updated: {x}")
-print(f"CPU Usage: {cpu_percent}")
-print(f"RAM Usage: {ram_percent}")
-print(f"Power data: {power}")
-print(f"USB Devices: {USB_devices}")
-print(f"Logs: {get_all_logs()}")
-print(f"Swap data: {swap_memoryData}")
-print("=" * 50)
 
-print(f"Network Debugger")
+    a = np.random.rand(matrix_size_width, matrix_size_height).astype(np.float32)
+    b = np.random.rand(matrix_size_width, matrix_size_height).astype(np.float32)
+    # Setup OpenCL
+    platform = cl.get_platforms()[0]
+    device = platform.get_devices(device_type=cl.device_type.GPU)[0]
+    context = cl.Context([device])
+    queue = cl.CommandQueue(context)
 
-v=""
-entry_points = get_entry_points()
-interface = input('Interface:')
-mac_address = get_mac_address(interface)
-network_connections = print_network_connections()
+    # Create OpenCL buffers
+    a_buffer = cl.Buffer(context, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=a)
+    b_buffer = cl.Buffer(context, cl.mem_flags.READ_ONLY | cl.mem_flags.COPY_HOST_PTR, hostbuf=b)
+    c_buffer = cl.Buffer(context, cl.mem_flags.WRITE_ONLY, b.nbytes)
 
-if netifaces.AF_INET in entry_points:
-    for entry_point in entry_points[netifaces.AF_INET]:
-        v +=  f"Entry Point: {entry_point[1]}, Gateway: {entry_point[0]}\n"
-udp_connections = psutil.net_connections(kind='tcp')
-tcp = f"Active TCP: \n"
-for i in range(len(udp_connections)):
-    sconn = udp_connections[i]
-    tcp += f"TCP Connection {i}\n"
-    tcp += f"FD: {sconn.fd}\n"
-    tcp += f"Family: {sconn.family}\n"
-    tcp += f"Type: {sconn.type}\n"
-    tcp += f"Laddr: {sconn.laddr}\n"
-    tcp += f"Raddr: {sconn.raddr}\n"
-    tcp += f"Status: {sconn.status}\n"
-    tcp += f"PID: {sconn.pid}\n"
-cbaf = f"Active UDP"
+# Load and compile the OpenCL kernel
+    kernel_code = """
+__kernel void matrix_multiply(__global const float* a, __global const float* b, __global float* c, const int size) {
+    int row = get_global_id(0);
+    int col = get_global_id(1);
+
+    float sum = 0;
+    for (int i = 0; i < size; ++i) {
+        sum += a[row * size + i] * b[i * size + col];
+    }
+    c[row * size + col] = sum;
+}
+    """
+
+    program = cl.Program(context, kernel_code).build()
+    matrix_size = matrix_size_width
+    # Execute the kernel
+    start_time_gpu = time.time()
+    program.matrix_multiply(queue, a.shape, None, a_buffer, b_buffer, c_buffer, np.int32(matrix_size))
+    cl.enqueue_copy(queue, c_buffer, c_buffer).wait()  # Copy result to c_buffer
+    end_time_gpu = time.time()
+    gpu_time_taken = end_time_gpu - start_time_gpu 
+    print("Time taken for GPU matrix multiplication:", gpu_time_taken, "seconds")
+
+
+def performance_test(ope=True):
+    # ensure checks
+    print('Ensure Checks:')
+    BATTERY_PLUGGED = psutil.sensors_battery().power_plugged
+    BATTERY_PERCENT= psutil.sensors_battery().percent
+    if BATTERY_PLUGGED:
+        pass
+        print(f'Battery -------- {BATTERY_PERCENT}, PLUGGED IN: True')
+
+    else:
+        if BATTERY_PERCENT < 25:
+            print('Program cannot run when below 25% Battery or without PWR plugged in.')
+            return
+        print('Reminder: Laptops run better when charged and full.')
+    listper = []
+    cpu_usage_data = []
+    cpu_freq_data = []
+    ram_usage_data = []
+
+    start_time = time.time()
+    cpu_freq = psutil.cpu_freq().max
+    
+    # converts it into Mhz
+    cpu_freq = cpu_freq / 1000
+    cpu_freq = int(input('Repeat:  '))
+    print(f'How many times: {cpu_freq}')
+    processor = platform.processor()
+    latency = []
+    with open('test.writeTest','w') as c:
+        c.write('ClEAR CLEAR')
+    for c in range(cpu_freq):
+        cv2.destroyAllWindows()
+
+        
+
+        # Example usage
+        
+        xdat = requests.get('http://api.open-notify.org/iss-now.json')
+        text = xdat.json()
+
+        print(f"{text}")
+        print(f"Processor {processor}")
+        print(f"Looped: {c}/{cpu_freq}")
+        testGPUPerformance()
+        
+        for key, value in display_cpu_info().items():
+            print(f"{key}:{value}")
+        mpmath.mp.dps = 1000 * (random.randint(0,255))
+        pi_value = mpmath.pi
+        
+        _ = random.randint(0, 12)
+        # cpu computational test
+        _ += random.randint(0, 255)
+        _ *= random.randint(0, 10)
+        _ /= random.randint(1, 25)
+        _ -= random.randint(0, 255)
+        _ *= math.pi
+        _ += math.e ** 3
+        _ *= pi_value
+        _ += math.cos(random.randint(0, 255))
+        _ *= math.sqrt(random.randint(0, 255))
+        _ += math.tan(random.randint(0, 255))
+        _ *= math.sin(random.randint(0, 255))
+        _ *= math.tan(_)
+        _ += math.radians(random.randint(0,53))
+        _ *= math.cosh(random.randint(0, 255))
+        r = psutil.sensors_battery().percent
+        deg = _ / 100
+        print(f"Battery Percentage: {r}")
+        print(f"Pi value : {pi_value}")
+        _ += (deg * random.randint(1, 200))
+        _ -= (deg * random.randint(1, 200))
+        _ /= round(deg * random.randint(1, 200))
+        _ *= (deg * random.randint(1, 200))
+        _ += (deg * random.randint(2,100))
+        _ += (math.fabs(random.randint(1, 900)))
+        alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'] + ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        v = ""
+        with open('test.writeTest', 'a') as c:
+            for i in range(50):
+                z = random.randint(0,(len(alphabet) - 1))
+                v += alphabet[z]
+            c.write(f"{str(random.randint(100000, 999999))}_uniform/.{v}")
+        with open('test.writeTest', 'r') as z:
+            print(z.read())
+        
+        _ -= (math.fabs(random.randint(1, 900)))
+        _ /= round(math.fabs(random.randint(1, 900)))
+        _ *= (math.fabs(random.randint(1, 900)))
+        _ /= (_ - math.pow(random.randint(1, 12), random.randint(1, 12)))
+        _ += (math.pow(_, random.randint(1, 30)) + float(random.randint(0, 255)))
+
+        # test write and read speed
+        x = random.randint(1, 10)
+        fil = f"{x}.jpeg"
+
+        image = cv2.imread(fil)
+        # Add text to the image
+        text = v
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        org = (random.randint(0,25), random.randint(0,25))
+        font_scale = random.randint(0,50)
+        color = (random.randint(0,255), random.randint(0,255), random.randint(0,255))  # white color in BGR
+        thickness = 2
+        image_with_text = cv2.putText(image, text, org, font, font_scale, color, thickness, cv2.LINE_AA)
+
+        # Apply some effects (e.g., blurring)
+        blurred_image = cv2.GaussianBlur(image_with_text, (15, 15), random.randint(1,25))
+
+        # Apply other operations to stress the CPU
+        # For example, you can convert the image to grayscale
+        inverted_image = cv2.bitwise_not(blurred_image)
+        gray = cv2.cvtColor(inverted_image, cv2.COLOR_BGR2GRAY)
+
+
+
+        # Display or further process thesult
+        cv2.imshow("Result", inverted_image)
+        cv2.imshow("Result 2",gray)
+  
+
+        # TensorFlow GPU acceleration test
+        t = cpu_freq * 99
+        size = 5000
+        with tf.device('/GPU:0'):
+            matrix_a = tf.random.uniform(shape=(size, size), minval=0, maxval=1000, dtype=tf.float32)
+            matrix_b = tf.random.uniform(shape=(size, size), minval=0, maxval=1000, dtype=tf.float32)
+            result = tf.matmul(matrix_a, matrix_b)
+        print("Result of matrix multiplication using TensorFlow:")
+        print(result)
+        with open('test.t', 'a') as c:
+            c.write(str(_))
+
+        os.system('clear')
+        # save listper data
+        cpu_info = display_cpu_info()
+        
+
+        listper.append(cpu_info)
+
+        cpu_usage_data.append(cpu_info['CPU Usage'])
+        cpu_freq_data.append(cpu_info['CPU Frequency'])
+        ram_usage_data.append(cpu_info['RAM Usage'])
+
+
+    end_time = time.time()
+    display_cpu_info()
+
+
+    points = compute_execution_time(t)
+    cv2.destroyAllWindows()
+
+    osloc = str(os.getcwd()) + "/"
+    v = "Unkown"
+    if psutil.LINUX:
+        v = "Linux QuantumMark"
+    if psutil.WINDOWS:
+        v = "Windows QuantumMark"
+    if psutil.MACOS:
+        v = "MacOS QuantumMark"
+    writeData = ""
+    dat =  0
+    for IVALUE, cpu_usage in enumerate(cpu_usage_data) :
+        ram_usage = ram_usage_data[IVALUE]  # Using IVALUE as index for ram_usage_data
+        writeData += f"Time Frame (in seconds: {IVALUE + 1}): <br> RAM USAGE: {ram_usage} <br> CPU USAGE: {cpu_usage} <br>"
+        dat += 1
+
             
-udp_connections = psutil.net_connections(kind='udp')
-for i in range(len(udp_connections)):
-    sconn = udp_connections[i]
-    cbaf += f"UDP Connection {i}\n"
-    cbaf += f"FD: {sconn.fd} \n"
-    cbaf += f"Family: {sconn.family} \n"
-    cbaf += f"Type: {sconn.type} \n"
-    cbaf += f"Laddr: {sconn.laddr} \n"
-    cbaf += f"Raddr: {sconn.raddr} \n"
-    cbaf += f"Status: {sconn.status} \n"
-    cbaf += f"PID: {sconn.pid} \n"
-print(f"Entry Points: {v}")
-latency = check_network_latency()
-print(f"Latency: {latency}")
-proxy = detect_proxy()
-print(f"Proxy: {proxy}")
-print(f"IP: {check_public_ip()}")
-print(f"Internet Speed: {check_internet_speed()}")
-print(f"Get Interface Addresses: {get_interface_addresses(interface)}")
-print(f"Mac Address: {mac_address}")
+        # Generate data arrays for the charts
+    time_points_str = str(list(range(len(cpu_usage_data))))
+    cpu_usage_data_str = str(cpu_usage_data)
+    cpu_freq_data_str = str(cpu_freq_data)
+    ram_usage_data_str = str(ram_usage_data)
+    # % (time_points_str, cpu_usage_data_str, cpu_freq_data_str, ram_usage_data_str)
+    # Create JavaScript code for Chart.js
+    dAx = """"""
+    for key,value in display_cpu_info().items():
+        dAx += f"{key} - {value}<br>"
+    
 
-print(f"User Node:{uuid.getnode()}")
-print('=' * 50)
+
+    
+
+    return listper, cpu_usage_data, cpu_freq_data, ram_usage_data, points
+def modeA():
+    listper, cpu_usage_data, cpu_freq_data, ram_usage_data, points = performance_test()
+
+    for i in range(len(listper)):
+        print("-" * 50)
+        print(f"Iteration {i + 1}:")
+        for key, value in listper[i].items():
+            print(f"{key}: {value}")
+
+    # Displaying CPU info
+    cpu_info = display_cpu_info()
+    for key, value in cpu_info.items():
+        print(f"{key}: {value}")
+    print(f'Overall Points: {points}')
+    return
+def display_cpu_info():
+    cpu_info = {
+        "Current time": time.asctime(),
+        'CPU Usage': psutil.cpu_percent(),
+        'CPU Cores': psutil.cpu_count(logical=False),
+        'Total CPU Cores': psutil.cpu_count(logical=True),
+        'CPU Frequency': psutil.cpu_freq().current,
+        'RAM Usage': psutil.virtual_memory().percent,
+        'Processes': len(psutil.pids()),
+    }
+    return cpu_info
+
+
+def compute_execution_time(executionTime):
+    points = round(executionTime / 10)
+
+if argument(False):
+    python_version = platform.python_version()
+    if psutil.MACOS:
+        print(f'You are Running MacOS on version (Python): {python_version}')
+    elif psutil.WINDOWS:
+        print(f'You are running Windows on version (Python): {python_version}')
+    elif psutil.LINUX:
+        print(f'You are Running Linux on version (Python): {python_version}')
+    else:
+        print('Unkown Software.')
+    print('=' * 50)
+    print('Device debugger:')
+
+    print(f'More CPU data:')
+    os.system('cpuinfo')
+    print(f"Updated: {x}")
+    print(f"CPU Usage: {cpu_percent}")
+    print(f"RAM Usage: {ram_percent}")
+    print(f"Power data: {power}")
+    print(f"USB Devices: {USB_devices}")
+    print(f"Logs: {get_all_logs()}")
+    print(f"Swap data: {swap_memoryData}")
+    print("=" * 50)
+
+    print(f"Network Debugger")
+
+    v=""
+    entry_points = get_entry_points()
+    interface = str(input('Interface (type ifconfig or ipconfig for all interfaces):'))
+    mac_address = get_mac_address(interface)
+    network_connections = print_network_connections()
+
+    if netifaces.AF_INET in entry_points:
+        for entry_point in entry_points[netifaces.AF_INET]:
+            v +=  f"Entry Point: {entry_point[1]}, Gateway: {entry_point[0]}\n"
+    print(f"Entry Points: {v}")
+    latency = check_network_latency()
+    print(f"Latency: {latency}")
+    proxy = detect_proxy()
+    print(f"Proxy: {proxy}")
+    print(f"IP: {check_public_ip()}")
+    print(f"Get Interface Addresses: {get_interface_addresses(interface)}")
+    print(f"Mac Address: {mac_address}")
+    print(f"Internet Speed: {check_internet_speed()}")
+
+    print(f"User Node:{uuid.getnode()}")
+    print('=' * 50)
+elif argument("qMT"):
+    print('USING QUANTUM MARK PRO VERSION')
+    # run Quantum Mark Pro
+    modeA()
