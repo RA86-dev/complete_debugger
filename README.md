@@ -52,6 +52,10 @@ This script provides comprehensive debugging and network analysis functionalitie
 
 - to run the program, run this command:
 ```sudo python3 path/to/main.py```
+**NOTE**
+  The new update allows you to just run the line shown above, but if you were to run
+```sudo python3 path/to/main.py qMT``` specifically qMT,you can run a Benchmark.
+  
 
 ## Latest Update!
 Hello! The newest update allows you to run a test benchmark instead of the usual Debugging Tools. In order to stress render, we made it so that it would generate images from Unsplash. Credits go to: 
