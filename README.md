@@ -48,6 +48,9 @@ This script provides comprehensive debugging and network analysis functionalitie
 The list of attributes at this moment that you can run like ```sudo python3 path/to/main.py attribute```
 - nothing; putting nothing in the slot will open CPU data and logs for debugging
 - qMT - qMT opens a benchmark.
+- os_system - displaying Operating system
+- pc - Displays PC data
+- network - Display's Network Data
 
 ## Examples
 
