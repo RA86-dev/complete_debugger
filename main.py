@@ -416,6 +416,8 @@ def check_network_interface_speed():
     except Exception as e:
         return f"Error checking network interface speeds: {e}"
 
+def is_run_with_sudo():
+    return os.geteuid() == 0
 
 
 
@@ -1227,7 +1229,8 @@ def fetch_all_interfaces():
         list.append(interface_name)
     return list
 
-    
+if not is_run_with_sudo():
+    print('You need sudo permissions to run the program.')
 if argument("qMT") or argument("qmt"):
     print('USING QUANTUM MARK PRO VERSION')
     import time
@@ -1300,7 +1303,7 @@ else:
     elif psutil.LINUX:
         print(f'You are Running Linux on version (Python): {python_version}')
     elif psutil.SUNOS:
-        print(f"You are running SunOS")
+        print(f"You are running SunOS on Version (Python): {python_version}")
     else:
         print('Unkown Software.')
     print('=' * 50)
