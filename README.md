@@ -56,9 +56,12 @@ The list of attributes at this moment that you can run like ```sudo python3 path
 
 - to run the program, run this command:
 ```sudo python3 path/to/main.py```
-**NOTE**
-  The new update allows you to just run the line shown above, but if you were to run
-```sudo python3 path/to/main.py qMT``` specifically qMT, you can run a Benchmark.
+
+## New Update!
+Whats changed:
+- Minor fixes
+- Uses PyOpenCL to get GPU info instead of GPUtil (allows non-Nvidia GPUS to run)
+- Removed GPUtil in requirements.txt
   
 
 ## Credits!
