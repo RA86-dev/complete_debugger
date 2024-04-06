@@ -62,6 +62,7 @@ What's changed:
 - Minor fixes
 - Uses PyOpenCL to get GPU info instead of GPUtil (allows non-Nvidia GPUS to run)
 - Removed GPUtil in requirements.txt
+- Allows Multi-GPU support (Integrated Graphics, Dedicated Graphics, etc.)
   
 
 ## Credits!
