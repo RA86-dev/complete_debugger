@@ -58,7 +58,7 @@ The list of attributes at this moment that you can run like ```sudo python3 path
 ```sudo python3 path/to/main.py```
 
 ## New Update!
-Whats changed:
+What's changed:
 - Minor fixes
 - Uses PyOpenCL to get GPU info instead of GPUtil (allows non-Nvidia GPUS to run)
 - Removed GPUtil in requirements.txt
