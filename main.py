@@ -3,10 +3,11 @@ print(f"Complete Debugger")
 print(f"Verson: 0.5")
 
 try:
+    import pyopencl as cl
     import psutil
     import sysinfo
     import platform,cpuinfo
-    import GPUtil
+
     import time
     import usb.core
     import usb.util
@@ -866,44 +867,21 @@ def disk_partitions():
         data += str(f"  Free: {get_size(partition_usage.free)}")
         data += str(f"  Percentage: {partition_usage.percent}%")
     return data
-def get_system_info():
-    system_info = {}
+def main():
+    config = {}
+    platforms = cl.get_platforms()
+    for platform in platforms:
+        config['Platform'] = str(platform.name)
+        devices = platform.get_devices()
+        for i, device in enumerate(devices):
+            config[f'Device {i+1}'] = str(device.name)
+            config[f'Type {i+1}'] = str(cl.device_type.to_string(device.type))
+            config[f'Vendor {i+1}'] = str(device.vendor)
+            config[f'Version {i+1}'] = str(device.version)
+    return config
 
-    # Basic system information
-    system_info['System'] = platform.system()
-    system_info['Node Name'] = platform.node()
-    system_info['Release'] = platform.release()
-    system_info['Version'] = platform.version()
 
-    system_info['Machine'] = platform.machine()
-    system_info['Processor'] = platform.processor()
-    boot_time_timestamp = psutil.boot_time()
-    bt = datetime.fromtimestamp(boot_time_timestamp)
-    system_info['Last reboot'] = str(f"Boot Time: {bt.year}/{bt.month}/{bt.day} {bt.hour}:{bt.minute}:{bt.second}")
 
-    # CPU information
-    cpu_info = cpuinfo.get_cpu_info()
-    system_info['CPU'] = cpu_info['brand_raw']
-    system_info['CPU Cores'] = psutil.cpu_count(logical=False)
-    system_info['CPU Threads'] = psutil.cpu_count(logical=True)
-
-    # Memory information
-    memory = psutil.virtual_memory()
-    system_info['Total Memory (GB)'] = round(memory.total / (1024 ** 3), 2)
-    # GPU information
-    try:
-        gpus = GPUtil.getGPUs()
-        if gpus:
-            for i, gpu in enumerate(gpus):
-                system_info[f'GPU {i + 1}'] = gpu.name
-                system_info[f'GPU {i + 1} Memory (GB)'] = gpu.memoryTotal
-        else:
-            system_info[f"GPU ERROR"] = "Your GPU does not support nvidia-smi. If you are running an NVIDIA GPU and you are still getting errors,please update your drivers. "
-            
-    except Exception as e:
-        system_info['GPU'] = 'Not Found'
-
-    return system_info
 def get_power():
     battery = psutil.sensors_battery()
     data = ""
@@ -939,7 +917,7 @@ def swap_memory_usage():
     return psutil.swap_memory().percent,psutil.swap_memory().used,psutil.swap_memory().total
 data = ""
 
-for key,value in get_system_info().items():
+for key,value in main().items():
     data += f"{key} - {value} "
 x = datetime.now()
 cpu_percent = get_cpu_usage()
@@ -1231,6 +1209,7 @@ def fetch_all_interfaces():
 
 if not is_run_with_sudo():
     print('You need sudo permissions to run the program.')
+    quit()
 if argument("qMT") or argument("qmt"):
     print('USING QUANTUM MARK PRO VERSION')
     import time
@@ -1252,8 +1231,11 @@ if argument("qMT") or argument("qmt"):
     # run Quantum Mark Pro
     modeA()
 elif argument("pc"):
+    print('System Data:')
+    print(data)
     print(f'More CPU data:')
     os.system('cpuinfo')
+    
     print(f"Updated: {x}")
     print(f"CPU Usage: {cpu_percent}")
     print(f"RAM Usage: {ram_percent}")
@@ -1290,6 +1272,8 @@ elif argument("network"):
 elif argument('os_system'):
     print(f'Operating System: {platform.platform()}')
 else:
+    print('System Data:')
+    print(data)
     python_version = platform.python_version()
     if psutil.FREEBSD:
         print('FreeBSD - Added in Install OS')
@@ -1306,8 +1290,10 @@ else:
         print(f"You are running SunOS on Version (Python): {python_version}")
     else:
         print('Unkown Software.')
+
     print('=' * 50)
     print('Device debugger:')
+   
 
     print(f'More CPU data:')
     os.system('cpuinfo')
