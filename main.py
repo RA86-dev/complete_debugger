@@ -1082,7 +1082,7 @@ def performance_test(ope=True):
         _ += (math.pow(_, random.randint(1, 30)) + float(random.randint(0, 255)))
 
         # test write and read speed
-        x = random.randint(1, 10)
+        x = random.randint(1, 8)
         fil = f"{x}.jpeg"
 
         image = cv2.imread(fil)
